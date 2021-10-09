@@ -88,7 +88,7 @@ function Chats(props) {
                 </ul>
             </div>
             <div id="interface">
-                <input type="text" name="Message" value={message} 
+                <input type="text" id="message" name="Message" value={message} 
                     onInput={e => setMessage(e.target.value)}
                     onKeyPress={e => {if (e.key === "Enter") sendMessage(message, props.roomId)}}/><br/>
                 <button onClick={() => sendMessage(message, props.roomId)}>Send</button>

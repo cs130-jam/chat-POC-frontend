@@ -49,3 +49,7 @@ div.username {
     height: 80vh;
     position: relative;
 }
+
+#message {
+    width: 400px;
+}
