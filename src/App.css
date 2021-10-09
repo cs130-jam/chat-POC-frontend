@@ -1,6 +1,15 @@
+body {
+    padding: 10px;
+}
+
+button {
+    margin-top: 5px;
+}
+
 ul {
     list-style-type: none;
-    width: 300px;
+    width: 400px;
+    padding-inline-start: 0px;
 }
 
 li {
@@ -28,4 +37,8 @@ li .received {
 li .sent {
     float: right;
     background-color: rgb(199, 202, 235);
+}
+
+div.username {
+    color: rgb(130, 130, 130);
 }
