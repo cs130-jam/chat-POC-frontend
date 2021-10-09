@@ -20,7 +20,7 @@ function Chats(props) {
         if (roomId.length === 0) return;
 
         const chatsUrl = chats.length > 0
-            ? withParams(apiUrl("chatroom", roomId, "after"), {"time": chats[0].at})
+            ? withParams(apiUrl("chatroom", roomId, "after"), {"time": chats[chats.length-1].at})
             : withParams(apiUrl("chatroom", roomId, "recent"), {"count": RECENT_CHATS_COUNT});
 
         const newChats = await (props.apiRequest(chatsUrl, {
@@ -38,7 +38,7 @@ function Chats(props) {
             .filter(id => !props.usersInfo.current.hasUser(id))
             .map(fetchUserInfo));
         
-        setChats(newChats.concat(chats));
+        setChats(chats.concat(newChats.reverse()));
         setIsLoaded(true);
     }
 
@@ -55,6 +55,8 @@ function Chats(props) {
     }
 
     async function sendMessage(message, roomId) {
+        if (message.length === 0) return;
+        
         const sendResponse = await (props.apiRequest(apiUrl("chatroom", roomId), {
             method: "POST",
             body: message
@@ -63,28 +65,34 @@ function Chats(props) {
                 response => response.json(),
                 error => console.log(error)));
 
-        console.log(sendResponse);
+        setMessage('');
         getChats(roomId);
     }
 
     return (isLoaded 
         ?
         <div>
-            <ul>
-                {chats.map(chat => 
-                    <li key={chat.id}>
-                        <div 
-                            className={props.usersInfo.current.isSessionUser(chat.senderId) ? "sent" : "received"}
-                            key={chat.id}
-                        >
-                            <div className="username">{props.usersInfo.current.getUser(chat.senderId).profile.username}</div>
-                            <div>{chat.message}</div>
-                        </div> 
-                    </li>
-                )}
-            </ul>
-            <input type="text" name="Message" value={message} onInput={e => setMessage(e.target.value)}/><br/>
-            <button onClick={() => sendMessage(message, props.roomId)}>Send</button>
+            <div id="chat">
+                <ul>
+                    {chats.map(chat => 
+                        <li key={chat.id}>
+                            <div 
+                                className={props.usersInfo.current.isSessionUser(chat.senderId) ? "sent" : "received"}
+                                key={chat.id}
+                            >
+                                <div className="username">{props.usersInfo.current.getUser(chat.senderId).profile.username}</div>
+                                <div>{chat.message}</div>
+                            </div> 
+                        </li>
+                    )}
+                </ul>
+            </div>
+            <div id="interface">
+                <input type="text" name="Message" value={message} 
+                    onInput={e => setMessage(e.target.value)}
+                    onKeyPress={e => {if (e.key === "Enter") sendMessage(message, props.roomId)}}/><br/>
+                <button onClick={() => sendMessage(message, props.roomId)}>Send</button>
+            </div>
         </div>
         : 
         <ul></ul>

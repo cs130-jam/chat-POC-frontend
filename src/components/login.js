@@ -24,7 +24,8 @@ function Login(props) {
     return (
         <div>
             <input type="text" name="Username" 
-                value={username} onInput={e => setUsername(e.target.value)}/>
+                value={username} onInput={e => setUsername(e.target.value)}
+                onKeyPress={e => {if (e.key === "Enter") setSessionToken(username)}}/>
             <br/>
             <button onClick={() => setSessionToken(username)}>Login</button>
         </div>

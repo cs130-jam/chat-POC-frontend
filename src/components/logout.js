@@ -2,15 +2,8 @@ import { apiUrl } from "../util/request";
 
 function Logout(props) {
     async function logout() {
-        const response = await (props.apiRequest(apiUrl("user", "logout"), {
-            method: "GET",
-            headers: {"Accept": "application/json"}
-        })
-            .then(
-                response => response.json(),
-                error => console.log(error)));
-
-        if (!response) return;
+        const response = await props.apiRequest(apiUrl("logout"), {method: "POST"});
+        if (!response.ok) return;
         props.removeSessionToken();
     };
 

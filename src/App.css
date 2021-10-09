@@ -10,6 +10,8 @@ ul {
     list-style-type: none;
     width: 400px;
     padding-inline-start: 0px;
+    position: absolute;
+    bottom: 5px;
 }
 
 li {
@@ -41,4 +43,9 @@ li .sent {
 
 div.username {
     color: rgb(130, 130, 130);
+}
+
+#chat {
+    height: 80vh;
+    position: relative;
 }
