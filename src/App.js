@@ -54,7 +54,8 @@ function AppManager() {
     useEffect(() => setupSessionUser(), [sessionToken]);
 
     return (sessionToken === null || roomId.length === 0
-        ? <Login setSessionToken={setSessionToken}></Login>
+        ? 
+        <Login setSessionToken={setSessionToken}></Login>
         : 
         <div>
             <Chats 
