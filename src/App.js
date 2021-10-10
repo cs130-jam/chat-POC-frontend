@@ -37,7 +37,6 @@ function AppManager() {
                 response => response.json(),
                 error => console.error(error)));
         if (!roomJson) return;
-        setRoomId(roomJson);
 
         const userJson = await (apiRequest(apiUrl("user"), {
             method: "GET",
@@ -47,7 +46,9 @@ function AppManager() {
                 response => response.json(),
                 error => console.error(error)));
         if (!userJson) return;
+
         usersInfo.current.setSessionUser(userJson);
+        setRoomId(roomJson);
     }
 
     useEffect(() => setupSessionUser(), [sessionToken]);
@@ -60,8 +61,12 @@ function AppManager() {
                 apiRequest={apiRequest}
                 roomId={roomId} 
                 usersInfo={usersInfo}
+                sessionToken={sessionToken}
             ></Chats>
-            <Logout removeSessionToken={removeSessionToken}></Logout>
+            <Logout 
+                removeSessionToken={removeSessionToken}
+                setRoomId={setRoomId}
+            ></Logout>
         </div>
     );
 }

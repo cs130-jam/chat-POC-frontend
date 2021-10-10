@@ -1,9 +1,12 @@
-import { apiUrl } from "../util/request";
-
 function Logout(props) {
+    function logout() {
+        props.removeSessionToken();
+        props.setRoomId('');
+    }
+    
     return (
         <div>
-            <button onClick={props.removeSessionToken}>Log Out</button>
+            <button onClick={logout}>Log Out</button>
         </div>
     );
 }
