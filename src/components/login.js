@@ -17,7 +17,7 @@ function Login(props) {
             console.error("Failed to log in");
         } else {
             const token = await loginResponse.text();
-            props.setSessionToken(token);
+            props.setSessionToken(tokenc);
         }
     }
 
