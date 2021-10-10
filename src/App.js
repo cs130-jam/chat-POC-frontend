@@ -61,10 +61,7 @@ function AppManager() {
                 roomId={roomId} 
                 usersInfo={usersInfo}
             ></Chats>
-            <Logout 
-                apiRequest={apiRequest} 
-                removeSessionToken={removeSessionToken} 
-            ></Logout>
+            <Logout removeSessionToken={removeSessionToken}></Logout>
         </div>
     );
 }

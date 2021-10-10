@@ -9,15 +9,15 @@ function Login(props) {
 
         const loginResponse = await fetch(apiUrl("login"), {
             method: "POST",
-            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            headers: {"Content-Type": "application/json", "Accept": "text/plain"},
             body: JSON.stringify({username: username})
         });
 
         if (!loginResponse.ok) {
             console.error("Failed to log in");
         } else {
-            const loginJson = await loginResponse.json();
-            props.setSessionToken(loginJson.token);
+            const token = await loginResponse.text();
+            props.setSessionToken(token);
         }
     }
 
