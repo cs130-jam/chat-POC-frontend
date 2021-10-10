@@ -23,13 +23,13 @@ function AppManager() {
             if (res.ok) {
                 return res;
             } else {
-                if (res.statusCode === 401) removeSessionToken();
+                if (res.status === 401) removeSessionToken();
                 return Promise.reject(res);
             }
         });
     }
 
-    async function getSessionUserInfo() {
+    async function setupSessionUser() {
         if (sessionToken === null) return;
 
         const roomJson = await (apiRequest(apiUrl("chatroom", "join"), {method: "POST"})
@@ -50,7 +50,7 @@ function AppManager() {
         usersInfo.current.setSessionUser(userJson);
     }
 
-    useEffect(() => getSessionUserInfo(), [sessionToken]);
+    useEffect(() => setupSessionUser(), [sessionToken]);
 
     return (sessionToken === null || roomId.length === 0
         ? <Login setSessionToken={setSessionToken}></Login>

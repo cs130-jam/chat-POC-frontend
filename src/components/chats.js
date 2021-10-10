@@ -10,10 +10,10 @@ function Chats(props) {
     const [message, setMessage] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
 
-    useInterval(
-        () => getChats(props.roomId), 
-        CHAT_REFRESH_TIME
-    );
+    // useInterval(
+    //     () => getChats(props.roomId), 
+    //     CHAT_REFRESH_TIME
+    // );
     useEffect(() => getChats(props.roomId), []);
 
     async function getChats(roomId) {
@@ -57,14 +57,13 @@ function Chats(props) {
     async function sendMessage(message, roomId) {
         if (message.length === 0) return;
         
-        const sendResponse = await (props.apiRequest(apiUrl("chatroom", roomId), {
+        const sendResponse = await props.apiRequest(apiUrl("chatroom", roomId), {
             method: "POST",
+            headers: {"Content-Type": "text/plain"},
             body: message
-        })
-            .then(
-                response => response.json(),
-                error => console.log(error)));
+        });
 
+        if (!sendResponse.ok) return;
         setMessage('');
         getChats(roomId);
     }
