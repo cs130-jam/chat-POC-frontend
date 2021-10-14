@@ -29,7 +29,19 @@ function AppManager() {
         });
     }
 
+    function testGeolocation() {
+        console.log("testing geolocation");
+        if('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                console.log(position.coords);
+            });
+        } else {
+            console.log("geolocation not available");
+        }
+    }
+
     async function setupSessionUser() {
+        testGeolocation();
         if (sessionToken === null) return;
 
         const roomJson = await (apiRequest(apiUrl("chatroom", "join"), {method: "POST"})
