@@ -1,5 +1,5 @@
 function apiUrl(...paths) {
-    return "http://localhost:8080/api/" + paths.join("/");
+    return "http://localhost/api/" + paths.join("/");
 }
 
 function withParams(url, params) {

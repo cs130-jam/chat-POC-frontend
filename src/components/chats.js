@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useRef } from 'react/cjs/react.development';
 import { apiUrl, withParams } from '../util/request';
 import useInterval from '../util/useInterval';
+import useStateRef from '../util/useStateRef';
 
 const RECENT_CHATS_COUNT = 100;
 const CHAT_REFRESH_TIME = 10000; // 10 seconds
-const WEBSOCKET_URL = "ws://localhost:8080/api/jam";
+const WEBSOCKET_URL = "ws://localhost/api/ws/jam";
 
 function Chats(props) {
-    const [chats, setChats] = useState([]);
+    const [chats, setChats, chatsRef] = useStateRef([]);
     const [message, setMessage] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
     let ws = useRef(null);
@@ -19,14 +20,14 @@ function Chats(props) {
     );
     useEffect(setup, []);
 
-    const makeWebsocket = () => {
+    function makeWebsocket() {
         let ws = new WebSocket(WEBSOCKET_URL);
         ws.onopen = () => {
             ws.send(props.sessionToken);
         }
         ws.onmessage = (message) => {
             if (message.data === props.roomId) {
-                getChats(props.roomId);
+                updateChats()
             }
         }
         ws.onerror = (error) => console.error(error);
@@ -36,21 +37,22 @@ function Chats(props) {
     
     function setup() {
         ws.current = makeWebsocket();
-        getChats(props.roomId);
+        updateChats()
     }
 
     function update() {
         if (ws.current === null || ws.current.readyState === WebSocket.CLOSED) {
             ws.current = makeWebsocket();
         }
-        getChats(props.roomId);
+        updateChats();
     }
 
-    async function getChats() {
+    async function updateChats() {
         if (props.roomId.length === 0) return;
+        const currentChats = chatsRef.current;
 
-        const chatsUrl = chats.length > 0
-            ? withParams(apiUrl("chatroom", props.roomId, "after"), {"time": chats[chats.length-1].at})
+        const chatsUrl = currentChats.length > 0
+            ? withParams(apiUrl("chatroom", props.roomId, "after"), {"time": currentChats[currentChats.length-1].at})
             : withParams(apiUrl("chatroom", props.roomId, "recent"), {"count": RECENT_CHATS_COUNT});
 
         const newChats = await (props.apiRequest(chatsUrl, {
@@ -63,14 +65,13 @@ function Chats(props) {
 
         if (!newChats) return;
 
-        await Promise.all(newChats
+        let unknownUsers = new Set(newChats
             .map(chat => chat.senderId)
-            .filter(id => !props.usersInfo.current.hasUser(id))
-            .map(fetchUserInfo));
+            .filter(id => !props.usersInfo.current.hasUser(id)));
+        await Promise.all([...unknownUsers].map(fetchUserInfo));
         
-        const res = chats.concat(newChats.reverse());
-        setChats(res);
         setIsLoaded(true);
+        setChats(currentChats.concat(newChats.reverse()));
     }
 
     async function fetchUserInfo(userId) {
@@ -96,7 +97,7 @@ function Chats(props) {
 
         if (!sendResponse.ok) return;
         setMessage('');
-        getChats(props.roomId);
+        updateChats()
     }
 
     function getUsername(userId) {
